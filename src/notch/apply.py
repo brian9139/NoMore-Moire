@@ -7,8 +7,8 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-from notch.mask import build_notch_masks_from_polar
-from spatial.guided import guided_filter
+from src.notch.mask import build_notch_masks_from_polar
+from src.spatial.guided import guided_filter
 
 
 def _iter_image_dirs(

@@ -1,7 +1,8 @@
 import os
 import cv2
 import pandas as pd
-from metrics import psnr, ssim, niqe, brisque, measure_time
+from src.eval.metrics import psnr, ssim, niqe, brisque, measure_time
+# from metrics import psnr, ssim, niqe, brisque, measure_time
 
 
 # IMG_EXT = [".jpg", ".png", ".jpeg"]
@@ -9,13 +10,13 @@ from metrics import psnr, ssim, niqe, brisque, measure_time
 # def is_image(fname):
 #     return os.path.splitext(fname.lower())[1] in IMG_EXT
 
-# Find GT 
+# Find GT
 def find_gt(data_root, rel_path):
-    
-    parent = os.path.dirname(rel_path)       
-    img_base = parent                        
 
-    gt_path = os.path.join(data_root, img_base + "_gt.jpg")
+    parent = os.path.dirname(rel_path)
+    img_base = parent
+
+    gt_path = os.path.join(data_root, img_base + "_gt.png")
     if os.path.exists(gt_path):
         return gt_path
     return None
@@ -33,7 +34,7 @@ def evaluate_folder(data_root, out_root, split):
         if not os.path.isdir(out_dir):
             continue
 
-        demo_path = os.path.join(out_dir, "demoire.jpg")
+        demo_path = os.path.join(out_dir, "demoire.png")
         if not os.path.exists(demo_path):
             continue
 
@@ -41,7 +42,7 @@ def evaluate_folder(data_root, out_root, split):
         if img is None:
             continue
 
-        rel = os.path.join(subdir, "demoire.jpg")
+        rel = os.path.join(subdir, "demoire.png")
 
 
         if split == "synth":
