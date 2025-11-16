@@ -1,10 +1,10 @@
 import os
 import cv2
 import pandas as pd
-from metrics import psnr, ssim, niqe, brisque, measure_time
+from .metrics import psnr, ssim, niqe, brisque, measure_time
 
 
-# IMG_EXT = [".jpg", ".png", ".jpeg"]
+IMG_EXT = [".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"]
 
 # def is_image(fname):
 #     return os.path.splitext(fname.lower())[1] in IMG_EXT
@@ -15,10 +15,18 @@ def find_gt(data_root, rel_path):
     parent = os.path.dirname(rel_path)       
     img_base = parent                        
 
-    gt_path = os.path.join(data_root, img_base + "_gt.jpg")
-    if os.path.exists(gt_path):
-        return gt_path
+    for ext in IMG_EXT:
+        gt_path = os.path.join(data_root, img_base + "_gt" + ext)
+        if os.path.exists(gt_path):
+            return gt_path
     return None
+
+def find_demoire(out_dir):
+    for ext in IMG_EXT:
+        p = os.path.join(out_dir, "demoire" + ext)
+        if os.path.exists(p):
+            return p, ext
+    return None, None
 
 def evaluate_folder(data_root, out_root, split):
     """
@@ -33,15 +41,15 @@ def evaluate_folder(data_root, out_root, split):
         if not os.path.isdir(out_dir):
             continue
 
-        demo_path = os.path.join(out_dir, "demoire.jpg")
-        if not os.path.exists(demo_path):
+        demo_path, ext = find_demoire(out_dir)
+        if demo_path is None:
             continue
 
         img = cv2.imread(demo_path)
         if img is None:
             continue
 
-        rel = os.path.join(subdir, "demoire.jpg")
+        rel = os.path.join(subdir, "demoire" + ext)
 
 
         if split == "synth":
