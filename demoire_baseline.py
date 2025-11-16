@@ -73,3 +73,23 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# test viz
+# import cv2
+
+# from src.io.artifact import load_maskpack, load_specpack
+# from src.viz.spectrum import show_spectrum_and_notch
+# from src.viz.panels import show_before_after_panels
+# from pathlib import Path
+
+# if __name__ == "__main__":
+
+#     dir_path = Path("out/synth/0001")
+#     mag, phase, logmag = load_specpack(dir_path)
+#     maskpack = load_maskpack(dir_path)
+
+#     show_spectrum_and_notch(logmag, mag, maskpack.mask, dir_path)
+
+#     before_img = cv2.imread('data/synth/0001.jpg')
+#     after_img = cv2.imread('out/synth/0001/demoire.png')
+#     show_before_after_panels(before_img, after_img)
