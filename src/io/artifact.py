@@ -28,11 +28,11 @@ def load_specpack(path: Path):
     Returns:
         mag   : float32[H,W]
         phase : float32[H,W]
-        logmag: float32[H,W]
+        log_magnitude: float32[H,W]
     """
     f = Path(path) / "specpack.npz"
     d = np.load(f)
-    return d['mag'], d['phase'], d['logmag']
+    return d['mag'], d['phase'], d['log_magnitude']
 
 # ---------------------------
 # peaks.json
