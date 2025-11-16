@@ -1,6 +1,8 @@
 import time
 import numpy as np
 import cv2
+import torch
+import pyiqa
 from skimage.metrics import structural_similarity as ssim_fn
 
 # PSNR
@@ -23,11 +25,6 @@ def ssim(pred, gt):
 
 
 # NIQE / BRISQUE
-import torch
-import pyiqa
-import cv2
-
-
 niqe_model = pyiqa.create_metric('niqe').eval()
 brisque_model = pyiqa.create_metric('brisque').eval()
 
