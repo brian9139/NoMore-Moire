@@ -5,3 +5,5 @@ scikit-image
 matplotlib
 tqdm
 pyyaml
+pandas
+pyiqa

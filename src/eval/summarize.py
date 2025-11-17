@@ -1,7 +1,8 @@
 import os
 import cv2
 import pandas as pd
-from .metrics import psnr, ssim, niqe, brisque, measure_time
+from src.eval.metrics import psnr, ssim, niqe, brisque, measure_time
+# from metrics import psnr, ssim, niqe, brisque, measure_time
 
 
 IMG_EXT = [".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"]
@@ -9,11 +10,8 @@ IMG_EXT = [".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"]
 # def is_image(fname):
 #     return os.path.splitext(fname.lower())[1] in IMG_EXT
 
-# Find GT 
+# Find GT
 def find_gt(data_root, rel_path):
-    
-    parent = os.path.dirname(rel_path)       
-    img_base = parent                        
 
     for ext in IMG_EXT:
         gt_path = os.path.join(data_root, img_base + "_gt" + ext)
