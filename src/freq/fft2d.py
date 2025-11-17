@@ -19,7 +19,7 @@ def load_image(category):
                 continue
             img = cv2.imread(img_path, cv2.IMREAD_UNCHANGED)
             if img is not None:
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.float32)
+                # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.float32)
                 image_list.append((name, img))
     return image_list
 
@@ -45,7 +45,10 @@ def fft2d(loader = None):
             images = load_image(category)
             print(f"Processing category: {category}, Number of images: {len(images)}")
             for name, img in images:
-                apply_window(img)
+                print(f"[spec] Processing image: {name}")
+                img_yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV).astype(np.float32)
+                img = img_yuv[:, :, 0]
+                # img = apply_window(img)
                 f = np.fft.fft2(img)
                 fshift = np.fft.fftshift(f)
                 mag = np.abs(fshift)
@@ -58,3 +61,5 @@ def fft2d(loader = None):
                             mag=mag, 
                             log_magnitude=log_mag, 
                             phase=phase)
+                np.savez(os.path.join(save_path, 'yuv.npz'), y=img_yuv[:, :, 0], u=img_yuv[:, :, 1], v=img_yuv[:, :, 2])
+                
