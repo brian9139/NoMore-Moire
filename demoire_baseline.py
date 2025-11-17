@@ -21,7 +21,7 @@ def main():
     loader = DataLoader(args.input, batch_size=4, color_mode='gray', category='synth')
 
     # read config/baseline.yaml if needed
-    with open(args.config, 'r') as f:
+    with open(args.config, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
 
     # print(type(config['guided']['eps']))
@@ -32,7 +32,7 @@ def main():
         print('Specpacks generation completed.')
     elif stage == 'peaks':
         print('Generating peaks...')
-        detect_peaks(r_min=config['params']['r_min'], max_pairs=3)
+        detect_peaks(r_min=config['params']['r_min'], max_pairs=config['params']['K'])
         print('Peaks generation completed.')
     elif stage == 'mask':
         print('Generating maskpacks...')

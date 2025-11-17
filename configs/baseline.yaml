@@ -9,18 +9,18 @@ experiment:
 # Core Hyperparameters
 # ==========================================
 params:
-  r_min: 6            # 最小半徑
-  K: 2                # radial 或 angular 的取樣點數、階數、分段數
-  delta_r: 3          # Δr
-  delta_theta: 4      # Δθ  例如 5.7°
-  alpha: 0.5          # α，一般用於 regularization / blending / damping
+  r_min: 10            # 最小半徑
+  K: 50                # radial 或 angular 的取樣點數、階數、分段數
+  delta_r: 80          # Δr
+  delta_theta: 15      # Δθ  例如 5.7°
+  alpha: 0.2          # α，一般用於 regularization / blending / damping
 
 # ==========================================
 # Guided-related Settings
 # ==========================================
 guided:
-  r: 6                # guided filter / guided smoothing 半徑
-  eps: 0.001          # epsilon 通常是正則項
+  r: 80                # guided filter / guided smoothing 半徑
+  eps: 0.05          # epsilon 通常是正則項
 
 # ==========================================
 # Output / Saving

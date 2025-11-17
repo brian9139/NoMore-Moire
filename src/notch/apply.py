@@ -198,6 +198,13 @@ def run_restore_stage(
         out_path = os.path.join(img_dir, "demoire.png")
 
         os.makedirs(img_dir, exist_ok=True)
+        yuv = np.load(os.path.join(img_dir, "yuv.npz"))
+        img = np.zeros((out_8bit.shape[0], out_8bit.shape[1], 3), dtype=np.uint8)
+        img[:, :, 0] = out_8bit
+        img[:, :, 1] = yuv['u']
+        img[:, :, 2] = yuv['v']
+        out_8bit = cv2.cvtColor(img, cv2.COLOR_YUV2BGR)
+        
         cv2.imwrite(out_path, out_8bit)
 
         print(f"[restore] {category}/{name} -> demoire.png")

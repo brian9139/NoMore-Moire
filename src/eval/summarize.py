@@ -14,9 +14,10 @@ IMG_EXT = [".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"]
 def find_gt(data_root, rel_path):
 
     for ext in IMG_EXT:
-        gt_path = os.path.join(data_root, img_base + "_gt" + ext)
+        gt_path = os.path.join(data_root, rel_path + "_gt" + ext)
         if os.path.exists(gt_path):
             return gt_path
+    print("GT not found for", rel_path)
     return None
 
 def find_demoire(out_dir):
@@ -51,7 +52,7 @@ def evaluate_folder(data_root, out_root, split):
 
 
         if split == "synth":
-            gt_path = find_gt(data_root, rel)
+            gt_path = find_gt(data_root, subdir)
             if gt_path is not None:
                 gt = cv2.imread(gt_path)
 

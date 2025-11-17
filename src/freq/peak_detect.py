@@ -13,7 +13,7 @@ def load_peaks_json(path):
         data = json.load(f)
     return data
 
-def find_local_maximum(log_mag, neighborhood_size=9):
+def find_local_maximum(log_mag, neighborhood_size=25):
     data_max = maximum_filter(log_mag, neighborhood_size)
     maximum = (log_mag == data_max)
 
@@ -25,8 +25,10 @@ def find_local_maximum(log_mag, neighborhood_size=9):
     peak_values = log_mag[maximum]
 
     peaks = list(zip(peak_x, peak_y, peak_values))
+    
     return peaks
 
+"""
 # def filter_peaks(peaks, center, r_min, max_pairs):
 #     cx, cy = center
 #     filtered_peaks = []
@@ -89,8 +91,9 @@ def find_local_maximum(log_mag, neighborhood_size=9):
 
 #     peak_pairs.sort(key=lambda x: x['avg_strength'], reverse=True)
 #     return peak_pairs[:max_pairs]
+"""
 
-def filter_peaks(peaks, center, r_min, max_pairs):
+def filter_peaks(peaks, center, r_min, max_pairs, h, w, log_mag):
     cx, cy = center
 
     if not peaks:
@@ -155,6 +158,14 @@ def filter_peaks(peaks, center, r_min, max_pairs):
         used[idx] = True
         used[j] = True
 
+        x, y, value = xs[idx], ys[idx], vals[idx]
+        start_x, end_x = (int(max(0, x - 12)), int(min(x + 13, w)))
+        start_y, end_y = (int(max(0, y - 12)), int(min(y + 13, h)))
+        mu = np.mean(log_mag[start_y:end_y, start_x:end_x])
+        sigma = np.std(log_mag[start_y:end_y, start_x:end_x])
+        if value < mu + 2 * sigma:
+            continue
+
         px1, py1, val1, dist1 = xs[idx], ys[idx], vals[idx], dist[idx]
         px2, py2, val2, dist2 = xs[j], ys[j], vals[j], dist[j]
 
@@ -184,7 +195,7 @@ def _detect_peaks(log_mag, r_min, max_pairs): #detect peaks from given logmag an
 
     all_peaks = find_local_maximum(log_mag)
 
-    peak_pairs = filter_peaks(all_peaks, center, r_min=r_min, max_pairs=max_pairs)
+    peak_pairs = filter_peaks(all_peaks, center, r_min=r_min, max_pairs=max_pairs, h=h, w=w, log_mag=log_mag)
 
     return peak_pairs
 
@@ -192,10 +203,12 @@ def detect_peaks(r_min, max_pairs, path = './out'): #loads from npz and detects 
     categories = ('real', 'synth')
 
     for category in categories:
+        if not os.path.exists(os.path.join(path, category)):
+            continue
         paths = os.listdir(os.path.join(path, category))
         for name in paths:
             if os.path.isdir(os.path.join(path, category, name)):
-                print('Processing:', category, name)
+                print('[peaks] Processing:', category, name)
                 specpak_path = os.path.join(path, category, name, 'specpack.npz')
                 mag, phase, log_mag = load_specpack_npz(specpak_path)
 
