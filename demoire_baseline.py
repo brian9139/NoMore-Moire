@@ -5,7 +5,7 @@ from src.freq.fft2d import fft2d
 from src.io.loader import DataLoader
 from src.freq.peak_detect import detect_peaks
 from src.notch.apply import run_mask_stage, run_restore_stage
-from src.eval.summarize import evaluate_folder
+# from src.eval.summarize import evaluate_folder
 
 def main():
     parser = argparse.ArgumentParser()
@@ -18,7 +18,7 @@ def main():
     args = parser.parse_args()
 
     stage = args.stage
-    loader = DataLoader(args.input, batch_size=4, color_mode='gray', category='synth')
+    loader = DataLoader('data', batch_size=4, color_mode='bgr')
 
     # read config/baseline.yaml if needed
     with open(args.config, 'r', encoding='utf-8') as f:
@@ -28,7 +28,7 @@ def main():
 
     if stage == 'spec':
         print('Generating specpacks...')
-        fft2d(loader=None)
+        fft2d(loader=loader)
         print('Specpacks generation completed.')
     elif stage == 'peaks':
         print('Generating peaks...')
