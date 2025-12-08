@@ -55,7 +55,8 @@ def fft2d(loader: DataLoader = None):
                     mag = np.abs(fshift)
                     phase = np.angle(fshift)
                     log_mag = np.log(mag + 1e-8)
-                    save_path = os.path.join('./out', category, name)
+                    filename = name.split('.')[0]
+                    save_path = os.path.join('./out', category, filename)
                     if not os.path.exists(save_path):
                         os.makedirs(save_path)
                     save_specpack_npz(path = os.path.join(save_path, 'specpack.npz'),
