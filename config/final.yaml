@@ -1,0 +1,43 @@
+experiment:
+  name: "final"
+  seed: 42
+
+params:
+  r_min: 0.1
+  K: 64
+  delta_r: 0.05
+  delta_theta: 0.1
+  alpha: 0.5
+
+guided:
+  r: 0.2
+  eps: 1e-3
+
+options:
+  normalize: true
+  use_gpu: true
+  verbose: true
+
+output:
+  save_dir: "out_final/"
+  save_prefix: "final"
+
+search:
+  enable: true
+
+  delta_r: [-0.05, 0.0, 0.05]
+  delta_theta: [-0.1, 0.0, 0.1]
+  alpha: [0.4, 0.5, 0.6]
+
+  # proxy combined weights
+  residual_w: 1.0
+  edge_w: 0.2
+
+  # early-stop
+  max_evals: 50
+  patience: 8
+  min_improve: 1.0e-6
+
+  # multi-scale / PnP
+  multiscale_weights: [0.5, 0.3, 0.2]
+  pnp_strength: 1.0
