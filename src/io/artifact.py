@@ -7,6 +7,21 @@ from dataclasses import dataclass
 # ---------------------------
 # Dataclasses
 # ---------------------------
+
+@dataclass
+class SpecPack:
+    mag: np.ndarray          # (H, W)
+    phase: np.ndarray        # (H, W)
+    log_magnitude: np.ndarray  # (H, W)
+
+@dataclass
+class SpecPackAdv:
+    mag: np.ndarray          # (H, W)
+    logmag: np.ndarray       # (H, W)
+    phase: np.ndarray        # (H, W)
+    logpolar: np.ndarray     # (H', W')
+    orient_energy: np.ndarray  # (H, W, C)
+
 @dataclass
 class Peak:
     r: float
@@ -19,25 +34,40 @@ class MaskPack:
     each: np.ndarray      # (K, H, W) or empty
     params: dict          # all notch parameters
 
+@dataclass
+class MaskPackMs:
+    mask_ms: np.ndarray   # (H, W)
+    each_ms: np.ndarray   # (K, H, W)
+    params_ms: dict     # all ms notch parameters
 # ---------------------------
 # specpack.npz
 # ---------------------------
-def load_specpack(path: Path):
+def load_specpack(path: Path) -> SpecPack:
     """
     Load specpack.npz from directory.
-    Returns:
-        mag   : float32[H,W]
-        phase : float32[H,W]
-        log_magnitude: float32[H,W]
+    Returns SpecPack(mag, phase, log_magnitude)
     """
     f = Path(path) / "specpack.npz"
     d = np.load(f)
-    return d['mag'], d['phase'], d['log_magnitude']
+    return SpecPack(mag=d['mag'], phase=d['phase'], log_magnitude=d['logmag'])
+
+def load_specpack_adv(path: Path) -> SpecPackAdv:
+    """
+    Load advanced specpack.npz from directory.
+    Returns SpecPackAdv(mag, logmag, phase, logpolar, orient_energy)
+    """
+    f = Path(path) / "specpack.npz"
+    d = np.load(f)
+    return SpecPackAdv(mag=d['mag'],
+                       logmag=d['logmag'],
+                       phase=d['phase'],
+                       logpolar=d['logpolar'],
+                       orient_energy=d['orient_energy'])
 
 # ---------------------------
 # peaks.json
 # ---------------------------
-def load_peaks(path: Path):
+def load_peaks(path: Path) -> list[Peak]:
     """
     Load peaks.json → list[Peak]
     """
@@ -61,7 +91,17 @@ def load_maskpack(path: Path) -> MaskPack:
     params = d['params'].item() if isinstance(d['params'], np.ndarray) else d['params']
     return MaskPack(mask=mask, each=each, params=params)
 
-
+def load_maskpack_(path: Path) -> MaskPackMs:
+    """
+    Load maskpack_ms.npz
+    Returns MaskPackMs(mask_ms, each_ms, params_ms)
+    """
+    f = Path(path) / "maskpack_ms.npz"
+    d = np.load(f, allow_pickle=True)
+    mask_ms = d['mask_ms']
+    each_ms = d['each_ms']
+    params_ms = d['params_ms'].item() if isinstance(d['params_ms'], np.ndarray) else d['params_ms']
+    return MaskPackMs(mask_ms=mask_ms, each_ms=each_ms, params_ms=params_ms)
 # ---------------------------
 # SAVE functions
 # ---------------------------
