@@ -91,7 +91,7 @@ def load_maskpack(path: Path) -> MaskPack:
     params = d['params'].item() if isinstance(d['params'], np.ndarray) else d['params']
     return MaskPack(mask=mask, each=each, params=params)
 
-def load_maskpack_(path: Path) -> MaskPackMs:
+def load_maskpack_ms(path: Path) -> MaskPackMs:
     """
     Load maskpack_ms.npz
     Returns MaskPackMs(mask_ms, each_ms, params_ms)
