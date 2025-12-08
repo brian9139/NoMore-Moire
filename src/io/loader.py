@@ -4,14 +4,14 @@ import numpy as np
 SUPPORTED_EXTS = (".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp")
 
 class DataLoader:
-    def __init__(self, root, batch_size, color_mode, category):
+    def __init__(self, root, batch_size, color_mode):
         self.root = root
         self.batch_size = batch_size
         self.color_mode = color_mode
-        self.category = category
-        self.pairs = self.scan_images(category)
+        self.pairs = []
 
     def scan_images(self, category):
+        # self.pairs = []
         files = []
         for ext in SUPPORTED_EXTS:
             files += glob.glob(os.path.join(self.root, category, f"*{ext}"), recursive=True)
@@ -23,8 +23,6 @@ class DataLoader:
 
         sorted(files, key=extract_number)
 
-        pairs = []
-
         for f in files:
             name, ext = os.path.splitext(f)
             if name.endswith("_gt"):
@@ -32,11 +30,14 @@ class DataLoader:
 
             gt = name + "_gt" + ext
             if os.path.exists(gt):
-                pairs.append((f, gt))
-            else:
+                self.pairs.append((f, gt))
+            elif category == 'synth':
+                self.pairs.append((f, f))
                 print(f"[Warning] GT not found for: {f}")
+            else:
+                self.pairs.append((f, f))
 
-        return pairs
+        print(f"[DataLoader] Scanned {len(self.pairs)} image pairs under {os.path.join(self.root, category)}")
 
     def load_image(self, path):
         image = cv2.imread(path, cv2.IMREAD_COLOR)
@@ -50,6 +51,8 @@ class DataLoader:
     def __iter__(self):
         batch_x = []
         batch_y = []
+        x_filenames = []
+        y_filenames = []
 
         for x_path, y_path in self.pairs:
             x_image = self.load_image(x_path)
@@ -57,15 +60,22 @@ class DataLoader:
 
             batch_x.append(x_image)
             batch_y.append(y_image)
+            # append filenames not paths
+            x_filenames.append(os.path.basename(x_path))
+            y_filenames.append(os.path.basename(y_path))
+
 
             if len(batch_x) == self.batch_size:
-                yield np.stack(batch_x), np.stack(batch_y)
+                yield x_filenames, np.stack(batch_x), y_filenames, np.stack(batch_y)
                 batch_x, batch_y = [], []
+                x_filenames, y_filenames = [], []
 
         if batch_x:
-            yield np.stack(batch_x), np.stack(batch_y)
+            yield x_filenames, np.stack(batch_x), y_filenames, np.stack(batch_y)
 
-# loader = DataLoader('../../data', 4, 'gray', 'synth')
+# loader = DataLoader('../../data', 4, 'gray')
+# loader.scan_images('synth')
+
 
 # for x, y in loader:
 #     print('input batch:', x.shape)
