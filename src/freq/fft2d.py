@@ -62,4 +62,3 @@ def fft2d(loader = None):
                             log_magnitude=log_mag, 
                             phase=phase)
                 np.savez(os.path.join(save_path, 'yuv.npz'), y=img_yuv[:, :, 0], u=img_yuv[:, :, 1], v=img_yuv[:, :, 2])
-                
