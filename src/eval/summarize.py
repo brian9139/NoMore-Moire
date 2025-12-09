@@ -3,6 +3,7 @@ import os
 import argparse
 import cv2
 import pandas as pd
+# from src.eval.metrics import psnr, ssim, niqe, brisque, measure_time
 from .metrics import psnr, ssim, niqe, brisque, measure_time
 
 IMG_EXT = [".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"]
@@ -18,25 +19,33 @@ def find_gt(data_root, rel_path):
     return None
 
 
-def find_demoire(out_dir):
+def find_demoire(out_dir, is_final=False):
     for ext in IMG_EXT:
-        p = os.path.join(out_dir, "demoire" + ext)
+        p = None
+        if is_final == True:
+            p = os.path.join(out_dir, "demoire_final" + ext)
+        else:
+            p = os.path.join(out_dir, "demoire" + ext)
         if os.path.exists(p):
             return p, ext
     return None, None
 
 
-def _load_demoire(out_root, subdir):
+def _load_demoire(out_root, subdir, is_final=False):
     out_dir = os.path.join(out_root, subdir)
     if not os.path.isdir(out_dir):
         return None, None, None
-    demo_path, ext = find_demoire(out_dir)
+    demo_path, ext = find_demoire(out_dir, is_final=is_final)
     if demo_path is None:
         return None, None, None
     img = cv2.imread(demo_path)
     if img is None:
         return None, None, None
-    rel = os.path.join(subdir, "demoire" + ext)
+    if is_final == True:
+        rel = os.path.join(subdir, "demoire_final" + ext)
+    else:
+        rel = os.path.join(subdir, "demoire" + ext)
+    # print(img, rel, ext)
     return img, rel, ext
 
 
@@ -46,11 +55,12 @@ def evaluate_pair_folder(data_root, out_base_root, out_final_root, split):
     base_subs = set(os.listdir(out_base_root)) if os.path.exists(out_base_root) else set()
     final_subs = set(os.listdir(out_final_root)) if os.path.exists(out_final_root) else set()
     all_subs = sorted([s for s in (base_subs | final_subs)])
+    print(f"Evaluating {split} data: {len(all_subs)} subdirectories found.")
 
     for subdir in all_subs:
         img_b, rel_b, _ = _load_demoire(out_base_root, subdir)
-        img_f, rel_f, _ = _load_demoire(out_final_root, subdir)
-
+        img_f, rel_f, _ = _load_demoire(out_final_root, subdir, is_final=True)
+        print(f"Evaluating subdir: {subdir}, baseline image: {rel_b}, final image: {rel_f}")
         # choose a rel_path for reporting (prefer baseline)
         rel = rel_b or rel_f
         if rel is None:

@@ -212,3 +212,6 @@ __marimo__/
 # dataset
 data/
 out/
+out_final/
+
+*.csv
